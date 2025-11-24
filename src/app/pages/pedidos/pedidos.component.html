@@ -1,0 +1,210 @@
+<div class="pedidos-container">
+  <div class="header">
+    <h1>Gestión de Pedidos</h1>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="estadisticas">
+    <div class="stat-card">
+      <div class="stat-icono">📋</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getTotalPedidosHoy() }}</div>
+        <div class="stat-label">Pedidos Hoy</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icono">💵</div>
+      <div class="stat-info">
+        <div class="stat-valor">${{ getTotalVentasHoy().toFixed(2) }}</div>
+        <div class="stat-label">Ventas Hoy</div>
+      </div>
+    </div>
+    <div class="stat-card alerta">
+      <div class="stat-icono">⏱️</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getPedidosPendientes() }}</div>
+        <div class="stat-label">Pendientes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros de Estado -->
+  <div class="filtros">
+    @for (estado of estados; track estado.id) {
+      <button
+        [class.activo]="estadoFiltro() === estado.id"
+        [style.--color-estado]="estado.color"
+        (click)="seleccionarEstado($any(estado.id))"
+      >
+        {{ estado.nombre }}
+      </button>
+    }
+  </div>
+
+  <!-- Lista de Pedidos -->
+  <div class="pedidos-grid">
+    @for (pedido of pedidosFiltrados(); track pedido.id) {
+      <div class="pedido-card" (click)="verDetalle(pedido)">
+        <div class="pedido-header">
+          <div class="orden-numero">#{{ pedido.numeroOrden }}</div>
+          <div
+            class="estado-badge"
+            [style.background-color]="getColorEstado(pedido.estado)"
+          >
+            {{ getNombreEstado(pedido.estado) }}
+          </div>
+        </div>
+
+        @if (pedido.nombreCliente) {
+          <div class="cliente">
+            <span class="icono">👤</span>
+            {{ pedido.nombreCliente }}
+          </div>
+        }
+
+        <div class="items-preview">
+          @for (item of pedido.items.slice(0, 3); track item.id) {
+            <div class="item-mini">
+              <span class="cantidad">{{ item.cantidad }}x</span>
+              <span class="nombre">{{ item.producto.nombre }}</span>
+            </div>
+          }
+          @if (pedido.items.length > 3) {
+            <div class="item-mini">
+              <span class="mas">+{{ pedido.items.length - 3 }} más</span>
+            </div>
+          }
+        </div>
+
+        <div class="pedido-footer">
+          <div class="fecha">{{ formatearFecha(pedido.fechaCreacion) }}</div>
+          <div class="total">${{ pedido.total.toFixed(2) }}</div>
+        </div>
+
+        @if (pedido.pagado) {
+          <div class="badge-pagado">✓ Pagado</div>
+        }
+      </div>
+    }
+    @empty {
+      <div class="sin-pedidos">
+        <p>No se encontraron pedidos</p>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal de Detalle -->
+@if (pedidoSeleccionado()) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="modal-detalle" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2>Pedido #{{ pedidoSeleccionado()!.numeroOrden }}</h2>
+          <p class="fecha">{{ formatearFecha(pedidoSeleccionado()!.fechaCreacion) }}</p>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarDetalle()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Estado Actual -->
+        <div class="seccion">
+          <h3>Estado del Pedido</h3>
+          <div class="estados-acciones">
+            @for (estado of estados.slice(1); track estado.id) {
+              <button
+                class="btn-estado"
+                [class.activo]="pedidoSeleccionado()!.estado === estado.id"
+                [style.--color-estado]="estado.color"
+                (click)="cambiarEstado(pedidoSeleccionado()!.id, $any(estado.id))"
+                [disabled]="pedidoSeleccionado()!.estado === EstadoPedido.CANCELADO"
+              >
+                {{ estado.nombre }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Información del Cliente -->
+        @if (pedidoSeleccionado()!.nombreCliente) {
+          <div class="seccion">
+            <h3>Cliente</h3>
+            <p class="info-cliente">{{ pedidoSeleccionado()!.nombreCliente }}</p>
+          </div>
+        }
+
+        <!-- Items del Pedido -->
+        <div class="seccion">
+          <h3>Items</h3>
+          <div class="items-detalle">
+            @for (item of pedidoSeleccionado()!.items; track item.id) {
+              <div class="item-detalle">
+                <div class="item-principal">
+                  <span class="cantidad-badge">{{ item.cantidad }}x</span>
+                  <span class="nombre">{{ item.producto.nombre }}</span>
+                  <span class="precio">${{ item.subtotal.toFixed(2) }}</span>
+                </div>
+                @if (item.notas) {
+                  <div class="item-notas">📝 {{ item.notas }}</div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Totales -->
+        <div class="seccion">
+          <div class="totales-detalle">
+            <div class="total-row">
+              <span>Subtotal:</span>
+              <span>${{ pedidoSeleccionado()!.subtotal.toFixed(2) }}</span>
+            </div>
+            <div class="total-row">
+              <span>Impuestos (16%):</span>
+              <span>${{ pedidoSeleccionado()!.impuestos.toFixed(2) }}</span>
+            </div>
+            <div class="total-row total-final">
+              <span>Total:</span>
+              <span>${{ pedidoSeleccionado()!.total.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pago -->
+        <div class="seccion">
+          <h3>Pago</h3>
+          <div class="info-pago">
+            <div class="estado-pago" [class.pagado]="pedidoSeleccionado()!.pagado">
+              @if (pedidoSeleccionado()!.pagado) {
+                <span class="icono">✓</span>
+                <span>Pagado</span>
+                @if (pedidoSeleccionado()!.metodoPago) {
+                  <span class="metodo">- {{ pedidoSeleccionado()!.metodoPago }}</span>
+                }
+              } @else {
+                <span class="icono">⏱</span>
+                <span>Pendiente de Pago</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (pedidoSeleccionado()!.notas) {
+          <div class="seccion">
+            <h3>Notas</h3>
+            <p class="notas-pedido">{{ pedidoSeleccionado()!.notas }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        @if (pedidoSeleccionado()!.estado !== EstadoPedido.CANCELADO && !pedidoSeleccionado()!.pagado) {
+          <button class="btn-cancelar-pedido" (click)="cancelarPedido(pedidoSeleccionado()!.id)">
+            Cancelar Pedido
+          </button>
+        }
+        <button class="btn-cerrar-modal" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

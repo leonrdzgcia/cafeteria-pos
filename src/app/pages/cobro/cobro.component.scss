@@ -1,0 +1,213 @@
+.cobro-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+}
+
+.badge {
+  background: #111827;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: 600;
+}
+
+.cobros-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cobro-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: left;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &.activo {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+
+  &__titulo {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  &__detalle {
+    display: flex;
+    justify-content: space-between;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+
+  &__total {
+    margin-top: 0.5rem;
+    font-weight: 600;
+  }
+}
+
+.detalle-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .label {
+    display: block;
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  strong {
+    font-size: 1.1rem;
+  }
+}
+
+.items {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+
+  &-encabezado,
+  .item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 0.75rem 1rem;
+  }
+
+  &-encabezado {
+    background: #f3f4f6;
+    font-weight: 600;
+  }
+
+  .item:nth-child(odd) {
+    background: #f9fafb;
+  }
+}
+
+.totales {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+  }
+
+  .total {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  span {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  select,
+  input {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+.resumen-pago {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f3f4f6;
+
+  strong {
+    font-size: 1.1rem;
+  }
+
+  .alerta {
+    color: #dc2626;
+  }
+}
+
+.btn-accion {
+  padding: 0.85rem;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: #0f172a;
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  color: #6b7280;
+  padding: 1rem 0;
+
+  p {
+    margin-bottom: 0.25rem;
+    color: #111827;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cobro-container {
+    grid-template-columns: 1fr;
+  }
+}
+

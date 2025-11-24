@@ -1,0 +1,441 @@
+.pos-container {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  min-height: 100vh;
+  background: #f5f5f5;
+  gap: 0;
+}
+
+.productos-panel {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  overflow: hidden;
+
+  .header {
+    padding: 1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+
+    h2 {
+      margin: 0 0 1rem 0;
+      color: #2c3e50;
+      font-size: 1.8rem;
+    }
+
+    .busqueda {
+      input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+        }
+      }
+    }
+  }
+
+  .categorias {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+
+    button {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s;
+      font-weight: 500;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #3498db;
+      }
+
+      &.activo {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+      }
+    }
+  }
+
+  .productos-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    align-content: start;
+
+    .producto-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #3498db;
+      }
+
+      &.sin-stock {
+        opacity: 0.5;
+        cursor: not-allowed;
+
+        &:hover {
+          transform: none;
+          box-shadow: none;
+        }
+      }
+
+      .producto-info {
+        h3 {
+          margin: 0 0 0.5rem 0;
+          color: #2c3e50;
+          font-size: 1.1rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .descripcion {
+          margin: 0 0 0.75rem 0;
+          color: #7f8c8d;
+          font-size: 0.85rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .precio-stock {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .precio {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #27ae60;
+          }
+
+          .stock {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            background: #ecf0f1;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+
+            &.bajo-stock {
+              color: #e74c3c;
+              background: #fadbd8;
+            }
+          }
+        }
+      }
+    }
+
+    .sin-productos {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: #95a5a6;
+    }
+  }
+}
+
+.carrito-panel {
+  display: flex;
+  flex-direction: column;
+  background: #2c3e50;
+  color: white;
+  border-left: 2px solid #1a252f;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+
+  .carrito-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #34495e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .btn-limpiar {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        background: #e74c3c;
+        color: white;
+      }
+    }
+  }
+
+  .mesa-selector {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #34495e;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #bdc3c7;
+    }
+
+    .select-mesa {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #34495e;
+      background: #34495e;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+      }
+
+      option {
+        background: #34495e;
+        color: white;
+      }
+    }
+
+    .sin-mesas-activas {
+      padding: 1rem;
+      background: #34495e;
+      border-radius: 6px;
+      text-align: center;
+
+      p {
+        margin: 0 0 0.5rem 0;
+        color: #e74c3c;
+        font-weight: 600;
+      }
+
+      small {
+        color: #95a5a6;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .mesa-info-panel {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #34495e;
+    background: #34495e;
+    margin: 0 1.5rem;
+    border-radius: 8px;
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: #95a5a6;
+        font-size: 0.9rem;
+      }
+
+      .valor {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .carrito-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+
+    .carrito-item {
+      background: #34495e;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 1rem;
+      align-items: center;
+
+      .item-info {
+        h4 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1rem;
+        }
+
+        .item-precio {
+          margin: 0;
+          color: #95a5a6;
+          font-size: 0.9rem;
+        }
+      }
+
+      .item-controles {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        button {
+          width: 30px;
+          height: 30px;
+          border: none;
+          background: #2c3e50;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1.2rem;
+          transition: background 0.3s;
+
+          &:hover {
+            background: #1a252f;
+          }
+        }
+
+        input {
+          width: 50px;
+          padding: 0.25rem;
+          text-align: center;
+          border: 1px solid #2c3e50;
+          background: #2c3e50;
+          color: white;
+          border-radius: 4px;
+          font-size: 0.9rem;
+        }
+      }
+
+      .item-subtotal {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #27ae60;
+      }
+
+      .btn-eliminar {
+        grid-column: 3;
+        grid-row: 1 / 3;
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: #e74c3c;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: background 0.3s;
+
+        &:hover {
+          background: #c0392b;
+        }
+      }
+    }
+
+    .carrito-vacio {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #95a5a6;
+
+      p {
+        margin: 0 0 0.5rem 0;
+      }
+
+      .hint {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .totales {
+    padding: 1.5rem;
+    border-top: 2px solid #34495e;
+    border-bottom: 2px solid #34495e;
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+
+      &.total-final {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #27ae60;
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #34495e;
+      }
+    }
+  }
+
+  .btn-enviar-mesa {
+    margin: 1.5rem;
+    padding: 1rem;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover:not(:disabled) {
+      background: #229954;
+    }
+
+    &:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .pos-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .carrito-panel {
+    max-height: 50vh;
+  }
+}

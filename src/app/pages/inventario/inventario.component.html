@@ -1,0 +1,177 @@
+<div class="inventario-container">
+  <div class="header">
+    <h1>Gestión de Inventario</h1>
+    <button class="btn-nuevo" (click)="abrirModalNuevo()">+ Nuevo Producto</button>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="estadisticas">
+    <div class="stat-card">
+      <div class="stat-icono">📦</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getTotalProductos() }}</div>
+        <div class="stat-label">Total Productos</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icono">💰</div>
+      <div class="stat-info">
+        <div class="stat-valor">${{ getValorInventario().toFixed(2) }}</div>
+        <div class="stat-label">Valor Inventario</div>
+      </div>
+    </div>
+    <div class="stat-card alerta">
+      <div class="stat-icono">⚠️</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getProductosBajoStock() }}</div>
+        <div class="stat-label">Bajo Stock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Búsqueda -->
+  <div class="busqueda">
+    <input
+      type="text"
+      placeholder="Buscar productos..."
+      [(ngModel)]="busqueda"
+      (ngModelChange)="busqueda.set($event)"
+    />
+  </div>
+
+  <!-- Tabla de Productos -->
+  <div class="tabla-container">
+    <table class="tabla-productos">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (producto of productosFiltrados(); track producto.id) {
+          <tr [class.inactivo]="!producto.activo">
+            <td class="nombre">{{ producto.nombre }}</td>
+            <td class="descripcion">{{ producto.descripcion || '-' }}</td>
+            <td>
+              <span class="badge-categoria">{{ getNombreCategoria(producto.categoria) }}</span>
+            </td>
+            <td class="precio">${{ producto.precio.toFixed(2) }}</td>
+            <td>
+              <span
+                class="badge-stock"
+                [class.bajo]="producto.stock < 10"
+                [class.medio]="producto.stock >= 10 && producto.stock < 50"
+                [class.alto]="producto.stock >= 50"
+              >
+                {{ producto.stock }}
+              </span>
+            </td>
+            <td>
+              <span class="badge-estado" [class.activo]="producto.activo">
+                {{ producto.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="acciones">
+              <button class="btn-accion editar" (click)="abrirModalEditar(producto)" title="Editar">
+                ✏️
+              </button>
+              <button class="btn-accion stock" (click)="ajustarStock(producto.id, 0)" title="Ajustar Stock">
+                📊
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarProducto(producto.id)" title="Eliminar">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td colspan="7" class="sin-datos">No se encontraron productos</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal de Producto -->
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ productoEditando() ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+        <button class="btn-cerrar" (click)="cerrarModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input
+            type="text"
+            [(ngModel)]="formulario().nombre"
+            (ngModelChange)="actualizarNombre($event)"
+            placeholder="Nombre del producto"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea
+            [(ngModel)]="formulario().descripcion"
+            (ngModelChange)="actualizarDescripcion($event)"
+            placeholder="Descripción del producto"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio *</label>
+            <input
+              type="number"
+              [(ngModel)]="formulario().precio"
+              (ngModelChange)="actualizarPrecio(+$event)"
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Stock *</label>
+            <input
+              type="number"
+              [(ngModel)]="formulario().stock"
+              (ngModelChange)="actualizarStock(+$event)"
+              placeholder="0"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select
+            [(ngModel)]="formulario().categoria"
+            (ngModelChange)="actualizarCategoria($event)"
+          >
+            @for (categoria of categorias; track categoria.id) {
+              <option [value]="categoria.id">{{ categoria.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardarProducto()">Guardar</button>
+      </div>
+    </div>
+  </div>
+}

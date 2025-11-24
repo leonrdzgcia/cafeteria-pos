@@ -1,0 +1,34 @@
+<div class="app-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h1>{{ title }}</h1>
+    </div>
+    <div class="navbar-menu">
+      <a routerLink="/asignacion" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🪑</span>
+        <span class="nav-text">Mesas</span>
+      </a>
+      <a routerLink="/pos" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">💳</span>
+        <span class="nav-text">Punto de Venta</span>
+      </a>
+      <a routerLink="/cobro" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">💰</span>
+        <span class="nav-text">Cobro</span>
+      </a>
+
+      <a routerLink="/pedidos" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-text">Pedidos</span>
+      </a>
+      <a routerLink="/inventario" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span class="nav-text">Inventario</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

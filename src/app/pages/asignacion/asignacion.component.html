@@ -1,0 +1,284 @@
+<div class="asignacion-container">
+  <div class="header">
+    <h1>Asignación de Mesas</h1>
+    <button class="btn-nueva" (click)="abrirModalAsignacion()">+ Nueva Asignación</button>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="estadisticas">
+    <div class="stat-card">
+      <div class="stat-icono">🪑</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ estadisticasMesas().disponibles }}</div>
+        <div class="stat-label">Mesas Disponibles</div>
+      </div>
+    </div>
+    <div class="stat-card ocupada">
+      <div class="stat-icono">🔴</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ estadisticasMesas().ocupadas }}</div>
+        <div class="stat-label">Mesas Ocupadas</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icono">📋</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getTotalAsignacionesHoy() }}</div>
+        <div class="stat-label">Asignaciones Hoy</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icono">👥</div>
+      <div class="stat-info">
+        <div class="stat-valor">{{ getTotalPersonasAtendidas() }}</div>
+        <div class="stat-label">Personas Atendidas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros de Ubicación -->
+  <div class="filtros">
+    @for (ubicacion of ubicaciones; track ubicacion.id) {
+      <button
+        [class.activo]="ubicacionFiltro() === ubicacion.id"
+        (click)="seleccionarUbicacion($any(ubicacion.id))"
+      >
+        {{ ubicacion.nombre }}
+      </button>
+    }
+  </div>
+
+  <div class="contenido-principal">
+    <!-- Panel de Mesas -->
+    <div class="panel-mesas">
+      <h2>Estado de Mesas</h2>
+      <div class="mesas-grid">
+        @for (mesa of mesasFiltradas(); track mesa.id) {
+          <div
+            class="mesa-card"
+            [class.disponible]="mesa.estado === EstadoMesa.DISPONIBLE"
+            [class.ocupada]="mesa.estado === EstadoMesa.OCUPADA"
+            [class.reservada]="mesa.estado === EstadoMesa.RESERVADA"
+            [class.mantenimiento]="mesa.estado === EstadoMesa.MANTENIMIENTO"
+            (click)="mesa.estado === EstadoMesa.DISPONIBLE && abrirModalAsignacion(mesa)"
+          >
+            <div class="mesa-header">
+              <span class="mesa-numero">Mesa {{ mesa.numero }}</span>
+              <span class="mesa-capacidad">{{ mesa.capacidad }} personas</span>
+            </div>
+            <div class="mesa-ubicacion">
+              <span class="icono">{{ getIconoUbicacion(mesa.ubicacion) }}</span>
+              <span>{{ getNombreUbicacion(mesa.ubicacion) }}</span>
+            </div>
+            <div class="mesa-estado" [style.background-color]="getColorEstadoMesa(mesa.estado)">
+              {{ getNombreEstadoMesa(mesa.estado) }}
+            </div>
+          </div>
+        }
+        @empty {
+          <div class="sin-mesas">
+            <p>No hay mesas en esta ubicación</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Panel de Asignaciones Activas -->
+    <div class="panel-asignaciones">
+      <h2>Asignaciones Activas</h2>
+      <div class="asignaciones-lista">
+        @for (asignacion of asignacionesActivas(); track asignacion.id) {
+          <div class="asignacion-card" (click)="verDetalleAsignacion(asignacion)">
+            <div class="asignacion-header">
+              <span class="orden-numero">#{{ asignacion.numeroOrden }}</span>
+              <span class="mesa-info">Mesa {{ asignacion.mesa.numero }}</span>
+            </div>
+            <div class="asignacion-info">
+              <div class="info-row">
+                <span class="icono">👤</span>
+                <span class="texto">{{ asignacion.nombreCliente }}</span>
+              </div>
+              <div class="info-row">
+                <span class="icono">👥</span>
+                <span class="texto">{{ asignacion.numeroPersonas }} {{ asignacion.numeroPersonas === 1 ? 'persona' : 'personas' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="icono">🕐</span>
+                <span class="texto">{{ formatearFecha(asignacion.fechaAsignacion) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+        @empty {
+          <div class="sin-asignaciones">
+            <p>No hay asignaciones activas</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Nueva Asignación -->
+@if (mostrarModalAsignacion()) {
+  <div class="modal-overlay" (click)="cerrarModalAsignacion()">
+    <div class="modal-asignacion" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Nueva Asignación</h2>
+        <button class="btn-cerrar" (click)="cerrarModalAsignacion()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Nombre del Cliente -->
+        <div class="form-group">
+          <label>Nombre del Cliente *</label>
+          <input
+            type="text"
+            [(ngModel)]="formularioAsignacion().nombreCliente"
+            (ngModelChange)="actualizarNombreCliente($event)"
+            placeholder="Ingresa el nombre del cliente"
+            autofocus
+          />
+        </div>
+
+        <!-- Número de Personas -->
+        <div class="form-group">
+          <label>Número de Personas *</label>
+          <input
+            type="number"
+            [(ngModel)]="formularioAsignacion().numeroPersonas"
+            (ngModelChange)="actualizarNumeroPersonas(+$event)"
+            min="1"
+            max="20"
+          />
+        </div>
+
+        <!-- Selección de Mesa -->
+        <div class="form-group">
+          <label>Seleccionar Mesa *</label>
+          <div class="mesas-seleccion">
+            @for (mesa of mesasDisponibles(); track mesa.id) {
+              <div
+                class="mesa-opcion"
+                [class.seleccionada]="formularioAsignacion().mesaId === mesa.id"
+                [class.insuficiente]="mesa.capacidad < formularioAsignacion().numeroPersonas"
+                (click)="mesa.capacidad >= formularioAsignacion().numeroPersonas && seleccionarMesa(mesa.id)"
+              >
+                <div class="mesa-numero-grande">{{ mesa.numero }}</div>
+                <div class="mesa-detalles">
+                  <span>{{ getIconoUbicacion(mesa.ubicacion) }} {{ getNombreUbicacion(mesa.ubicacion) }}</span>
+                  <span class="capacidad">Cap: {{ mesa.capacidad }}</span>
+                </div>
+                @if (mesa.capacidad < formularioAsignacion().numeroPersonas) {
+                  <div class="insuficiente-badge">Insuficiente</div>
+                }
+              </div>
+            }
+            @empty {
+              <div class="sin-mesas-disponibles">
+                <p>No hay mesas disponibles en este momento</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="form-group">
+          <label>Notas (opcional)</label>
+          <textarea
+            [(ngModel)]="formularioAsignacion().notas"
+            (ngModelChange)="actualizarNotas($event)"
+            placeholder="Notas adicionales..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarModalAsignacion()">Cancelar</button>
+        <button
+          class="btn-confirmar"
+          (click)="crearAsignacion()"
+          [disabled]="!formularioAsignacion().mesaId || !formularioAsignacion().nombreCliente"
+        >
+          Asignar Mesa
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Detalle de Asignación -->
+@if (mostrarDetalleAsignacion() && asignacionSeleccionada()) {
+  <div class="modal-overlay" (click)="cerrarDetalleAsignacion()">
+    <div class="modal-detalle" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2>Asignación #{{ asignacionSeleccionada()!.numeroOrden }}</h2>
+          <p class="fecha">{{ formatearFecha(asignacionSeleccionada()!.fechaAsignacion) }}</p>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarDetalleAsignacion()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Información de la Mesa -->
+        <div class="seccion">
+          <h3>Mesa Asignada</h3>
+          <div class="info-mesa">
+            <div class="mesa-visual">
+              <div class="mesa-numero-grande">{{ asignacionSeleccionada()!.mesa.numero }}</div>
+              <div class="mesa-info-detalle">
+                <p>{{ getIconoUbicacion(asignacionSeleccionada()!.mesa.ubicacion) }} {{ getNombreUbicacion(asignacionSeleccionada()!.mesa.ubicacion) }}</p>
+                <p>Capacidad: {{ asignacionSeleccionada()!.mesa.capacidad }} personas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del Cliente -->
+        <div class="seccion">
+          <h3>Información del Cliente</h3>
+          <div class="info-cliente-detalle">
+            <div class="info-row-detalle">
+              <span class="label">Nombre:</span>
+              <span class="valor">{{ asignacionSeleccionada()!.nombreCliente }}</span>
+            </div>
+            <div class="info-row-detalle">
+              <span class="label">Número de Personas:</span>
+              <span class="valor">{{ asignacionSeleccionada()!.numeroPersonas }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notas -->
+        @if (asignacionSeleccionada()!.notas) {
+          <div class="seccion">
+            <h3>Notas</h3>
+            <p class="notas-texto">{{ asignacionSeleccionada()!.notas }}</p>
+          </div>
+        }
+
+        <!-- Estado -->
+        <div class="seccion">
+          <h3>Estado</h3>
+          <div class="estado-badge-grande">
+            {{ asignacionSeleccionada()!.estado }}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        @if (asignacionSeleccionada()!.estado === EstadoAsignacion.ACTIVA) {
+          <button class="btn-cancelar-asignacion" (click)="cancelarAsignacion(asignacionSeleccionada()!.id)">
+            Cancelar Asignación
+          </button>
+          <button class="btn-finalizar" (click)="finalizarAsignacion(asignacionSeleccionada()!.id)">
+            Finalizar y Liberar Mesa
+          </button>
+        } @else {
+          <button class="btn-cerrar-modal" (click)="cerrarDetalleAsignacion()">Cerrar</button>
+        }
+      </div>
+    </div>
+  </div>
+}
