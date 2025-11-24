@@ -269,6 +269,14 @@
             .texto {
               font-size: 0.9rem;
             }
+
+            &.detalle-personas {
+              background: #f0f7ff;
+              padding: 0.5rem;
+              border-radius: 8px;
+              margin-top: 0.25rem;
+              font-size: 0.85rem;
+            }
           }
         }
       }
@@ -368,6 +376,90 @@
 
       textarea {
         resize: vertical;
+      }
+    }
+
+    .form-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .contador-personas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+
+      .btn-contador {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #3498db;
+        background: white;
+        color: #3498db;
+        border-radius: 8px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+
+        &:hover {
+          background: #3498db;
+          color: white;
+          transform: scale(1.1);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+
+      .valor-contador {
+        min-width: 50px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+    }
+
+    .total-personas {
+      background: #e3f2fd;
+      border: 2px solid #3498db;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+
+      .icono {
+        font-size: 1.5rem;
+      }
+
+      span {
+        color: #1976d2;
+        font-size: 1rem;
+
+        strong {
+          font-size: 1.3rem;
+          color: #0d47a1;
+        }
+      }
+
+      small {
+        color: #546e7a;
+        font-size: 0.85rem;
       }
     }
 

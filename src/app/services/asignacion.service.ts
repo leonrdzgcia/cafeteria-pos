@@ -75,6 +75,8 @@ export class AsignacionService {
       mesa: mesa,
       nombreCliente: asignacionData.nombreCliente,
       numeroPersonas: asignacionData.numeroPersonas,
+      numeroAdultos: asignacionData.numeroAdultos,
+      numeroNinos: asignacionData.numeroNinos,
       estado: EstadoAsignacion.ACTIVA,
       fechaAsignacion: new Date(),
       notas: asignacionData.notas

@@ -120,6 +120,27 @@
         }
       }
 
+      .asignacion-info {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        background: #e3f2fd;
+        border-radius: 8px;
+        color: #1976d2;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .icono {
+          font-size: 1rem;
+        }
+
+        .separador {
+          margin: 0 0.25rem;
+          color: #90caf9;
+        }
+      }
+
       .cliente {
         margin-bottom: 1rem;
         color: #7f8c8d;
@@ -289,6 +310,41 @@
           &:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+          }
+        }
+      }
+
+      .info-asignacion {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+
+        .asignacion-detalle {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 1rem;
+          background: #e3f2fd;
+          border-radius: 8px;
+
+          .icono {
+            font-size: 1.5rem;
+          }
+
+          .asignacion-texto {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            strong {
+              color: #1976d2;
+              font-size: 1rem;
+            }
+
+            small {
+              color: #546e7a;
+              font-size: 0.85rem;
+            }
           }
         }
       }

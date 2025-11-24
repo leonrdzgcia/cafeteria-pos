@@ -6,6 +6,8 @@ export interface Asignacion {
   mesa: Mesa;
   nombreCliente: string;
   numeroPersonas: number;
+  numeroAdultos: number;
+  numeroNinos: number;
   estado: EstadoAsignacion;
   fechaAsignacion: Date;
   fechaLiberacion?: Date;
@@ -24,5 +26,7 @@ export interface AsignacionCreacion {
   mesaId: string;
   nombreCliente: string;
   numeroPersonas: number;
+  numeroAdultos: number;
+  numeroNinos: number;
   notas?: string;
 }

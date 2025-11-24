@@ -34,6 +34,8 @@ export class AsignacionComponent {
     mesaId: '',
     nombreCliente: '',
     numeroPersonas: 1,
+    numeroAdultos: 1,
+    numeroNinos: 0,
     notas: ''
   });
 
@@ -75,6 +77,8 @@ export class AsignacionComponent {
         mesaId: mesa.id,
         nombreCliente: '',
         numeroPersonas: 1,
+        numeroAdultos: 1,
+        numeroNinos: 0,
         notas: ''
       });
     } else {
@@ -82,6 +86,8 @@ export class AsignacionComponent {
         mesaId: '',
         nombreCliente: '',
         numeroPersonas: 1,
+        numeroAdultos: 1,
+        numeroNinos: 0,
         notas: ''
       });
     }
@@ -102,6 +108,30 @@ export class AsignacionComponent {
 
   actualizarNumeroPersonas(numero: number): void {
     this.formularioAsignacion.update(f => ({ ...f, numeroPersonas: numero }));
+  }
+
+  actualizarNumeroAdultos(numero: number): void {
+    const numeroAdultos = Math.max(0, numero);
+    this.formularioAsignacion.update(f => {
+      const numeroNinos = f.numeroNinos;
+      return {
+        ...f,
+        numeroAdultos,
+        numeroPersonas: numeroAdultos + numeroNinos
+      };
+    });
+  }
+
+  actualizarNumeroNinos(numero: number): void {
+    const numeroNinos = Math.max(0, numero);
+    this.formularioAsignacion.update(f => {
+      const numeroAdultos = f.numeroAdultos;
+      return {
+        ...f,
+        numeroNinos,
+        numeroPersonas: numeroAdultos + numeroNinos
+      };
+    });
   }
 
   actualizarNotas(notas: string): void {
@@ -136,6 +166,8 @@ export class AsignacionComponent {
       mesaId: form.mesaId,
       nombreCliente: form.nombreCliente.trim(),
       numeroPersonas: form.numeroPersonas,
+      numeroAdultos: form.numeroAdultos,
+      numeroNinos: form.numeroNinos,
       notas: form.notas
     });
 

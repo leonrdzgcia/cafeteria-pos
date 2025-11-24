@@ -102,6 +102,12 @@
                 <span class="icono">👥</span>
                 <span class="texto">{{ asignacion.numeroPersonas }} {{ asignacion.numeroPersonas === 1 ? 'persona' : 'personas' }}</span>
               </div>
+              <div class="info-row detalle-personas">
+                <span class="icono">👨</span>
+                <span class="texto">{{ asignacion.numeroAdultos }} adulto(s)</span>
+                <span class="icono">👶</span>
+                <span class="texto">{{ asignacion.numeroNinos }} niño(s)</span>
+              </div>
               <div class="info-row">
                 <span class="icono">🕐</span>
                 <span class="texto">{{ formatearFecha(asignacion.fechaAsignacion) }}</span>
@@ -141,16 +147,39 @@
           />
         </div>
 
-        <!-- Número de Personas -->
-        <div class="form-group">
-          <label>Número de Personas *</label>
-          <input
-            type="number"
-            [(ngModel)]="formularioAsignacion().numeroPersonas"
-            (ngModelChange)="actualizarNumeroPersonas(+$event)"
-            min="1"
-            max="20"
-          />
+        <!-- Número de Adultos y Niños -->
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Adultos *</label>
+            <div class="contador-personas">
+              <button type="button" class="btn-contador" (click)="actualizarNumeroAdultos(formularioAsignacion().numeroAdultos - 1)">
+                −
+              </button>
+              <span class="valor-contador">{{ formularioAsignacion().numeroAdultos }}</span>
+              <button type="button" class="btn-contador" (click)="actualizarNumeroAdultos(formularioAsignacion().numeroAdultos + 1)">
+                +
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Niños</label>
+            <div class="contador-personas">
+              <button type="button" class="btn-contador" (click)="actualizarNumeroNinos(formularioAsignacion().numeroNinos - 1)">
+                −
+              </button>
+              <span class="valor-contador">{{ formularioAsignacion().numeroNinos }}</span>
+              <button type="button" class="btn-contador" (click)="actualizarNumeroNinos(formularioAsignacion().numeroNinos + 1)">
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total de Personas (calculado automáticamente) -->
+        <div class="total-personas">
+          <span class="icono">👥</span>
+          <span>Total de personas: <strong>{{ formularioAsignacion().numeroPersonas }}</strong></span>
+          <small>({{ formularioAsignacion().numeroAdultos }} adulto(s) + {{ formularioAsignacion().numeroNinos }} niño(s))</small>
         </div>
 
         <!-- Selección de Mesa -->
@@ -244,8 +273,16 @@
               <span class="valor">{{ asignacionSeleccionada()!.nombreCliente }}</span>
             </div>
             <div class="info-row-detalle">
-              <span class="label">Número de Personas:</span>
+              <span class="label">Total de Personas:</span>
               <span class="valor">{{ asignacionSeleccionada()!.numeroPersonas }}</span>
+            </div>
+            <div class="info-row-detalle">
+              <span class="label">👨 Adultos:</span>
+              <span class="valor">{{ asignacionSeleccionada()!.numeroAdultos }}</span>
+            </div>
+            <div class="info-row-detalle">
+              <span class="label">👶 Niños:</span>
+              <span class="valor">{{ asignacionSeleccionada()!.numeroNinos }}</span>
             </div>
           </div>
         </div>

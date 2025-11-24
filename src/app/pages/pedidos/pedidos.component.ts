@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../services/pedido.service';
 import { PagoService } from '../../services/pago.service';
+import { AsignacionService } from '../../services/asignacion.service';
 import { Pedido, EstadoPedido } from '../../models/pedido.model';
+import { Asignacion } from '../../models/asignacion.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -15,6 +17,7 @@ import { Pedido, EstadoPedido } from '../../models/pedido.model';
 export class PedidosComponent {
   private pedidoService = inject(PedidoService);
   private pagoService = inject(PagoService);
+  private asignacionService = inject(AsignacionService);
 
   pedidos = this.pedidoService.getPedidos();
   estadoFiltro = signal<EstadoPedido | 'TODOS'>('TODOS');
@@ -99,5 +102,10 @@ export class PedidosComponent {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  getAsignacionPorPedido(pedidoId: string): Asignacion | undefined {
+    const asignaciones = this.asignacionService.getAsignaciones()();
+    return asignaciones.find(a => a.pedidoId === pedidoId);
   }
 }

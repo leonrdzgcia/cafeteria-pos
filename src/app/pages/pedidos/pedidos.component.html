@@ -55,6 +55,15 @@
           </div>
         </div>
 
+        @if (getAsignacionPorPedido(pedido.id); as asignacion) {
+          <div class="asignacion-info">
+            <span class="icono">🪑</span>
+            <span>Mesa {{ asignacion.mesa.numero }}</span>
+            <span class="separador">·</span>
+            <span>Asignación #{{ asignacion.numeroOrden }}</span>
+          </div>
+        }
+
         @if (pedido.nombreCliente) {
           <div class="cliente">
             <span class="icono">👤</span>
@@ -107,6 +116,29 @@
       </div>
 
       <div class="modal-body">
+        <!-- Información de Mesa y Asignación -->
+        @if (getAsignacionPorPedido(pedidoSeleccionado()!.id); as asignacion) {
+          <div class="seccion">
+            <h3>Mesa y Asignación</h3>
+            <div class="info-asignacion">
+              <div class="asignacion-detalle">
+                <span class="icono">🪑</span>
+                <div class="asignacion-texto">
+                  <strong>Mesa {{ asignacion.mesa.numero }}</strong>
+                  <small>Capacidad: {{ asignacion.mesa.capacidad }} personas</small>
+                </div>
+              </div>
+              <div class="asignacion-detalle">
+                <span class="icono">📋</span>
+                <div class="asignacion-texto">
+                  <strong>Asignación #{{ asignacion.numeroOrden }}</strong>
+                  <small>{{ asignacion.numeroPersonas }} personas</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Estado Actual -->
         <div class="seccion">
           <h3>Estado del Pedido</h3>
