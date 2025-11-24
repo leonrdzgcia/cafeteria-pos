@@ -1,0 +1,11 @@
+{
+  "ftp": {
+    "host": "194.164.64.99",
+    "port": 21,
+    "user": "u255965900.tienda.nonicode.com",
+    "password": "Umm89618b?",
+    "remoteRoot": "/public_html/",
+    "deleteRemote": false
+  },
+  "url": "https://tienda.nonicode.com/"
+}
