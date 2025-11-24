@@ -19,8 +19,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/pedidos/pedidos.component').then(m => m.PedidosComponent)
   },
   {
-    path: 'cobro',
-    loadComponent: () => import('./pages/cobro/cobro.component').then(m => m.CobroComponent)
+    path: 'pagar',
+    loadComponent: () => import('./pages/pagar/pagar.component').then(m => m.PagarComponent)
   },
   {
     path: 'asignacion',

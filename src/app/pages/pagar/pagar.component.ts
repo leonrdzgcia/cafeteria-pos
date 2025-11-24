@@ -9,13 +9,13 @@ import { Pedido } from '../../models/pedido.model';
 import { MetodoPago } from '../../models/pago.model';
 
 @Component({
-  selector: 'app-cobro',
+  selector: 'app-pagar',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './cobro.component.html',
-  styleUrls: ['./cobro.component.scss']
+  templateUrl: './pagar.component.html',
+  styleUrls: ['./pagar.component.scss']
 })
-export class CobroComponent {
+export class PagarComponent {
   private asignacionService = inject(AsignacionService);
   private pedidoService = inject(PedidoService);
   private pagoService = inject(PagoService);
@@ -31,7 +31,7 @@ export class CobroComponent {
     montoPagado: 0
   });
 
-  cobrosPendientes = computed(() => {
+  pagosPendientes = computed(() => {
     const asignaciones = this.asignaciones();
 
     return asignaciones
@@ -42,12 +42,12 @@ export class CobroComponent {
       .map(asignacion => ({
         asignacion,
         pedido: asignacion.pedidoId
-          ? this.pedidoService.getPedidoById(asignacion.pedidoId) ?? null
-          : null
+          ? this.pedidoService.getPedidoById(asignacion.pedidoId)
+          : undefined
       }))
       .filter(
         (item): item is { asignacion: Asignacion; pedido: Pedido } =>
-          !!item.pedido && !item.pedido.pagado
+          item.pedido !== undefined && item.pedido !== null && !item.pedido.pagado
       );
   });
 
@@ -64,14 +64,16 @@ export class CobroComponent {
   });
 
   metodosPago = [
-    { id: MetodoPago.EFECTIVO, nombre: 'Efectivo' },
-    { id: MetodoPago.TARJETA_DEBITO, nombre: 'Tarjeta de Débito' },
-    { id: MetodoPago.TARJETA_CREDITO, nombre: 'Tarjeta de Crédito' },
-    { id: MetodoPago.TRANSFERENCIA, nombre: 'Transferencia' },
-    { id: MetodoPago.QR, nombre: 'Código QR' }
+    { id: MetodoPago.EFECTIVO, nombre: 'Efectivo', icono: '💵' },
+    { id: MetodoPago.TARJETA_DEBITO, nombre: 'Débito', icono: '💳' },
+    { id: MetodoPago.TARJETA_CREDITO, nombre: 'Crédito', icono: '💳' },
+    { id: MetodoPago.TRANSFERENCIA, nombre: 'Transferencia', icono: '🏦' },
+    { id: MetodoPago.QR, nombre: 'QR', icono: '📱' }
   ];
 
-  seleccionarCobro(asignacionId: string): void {
+  cantidadesRapidas = [50, 100, 200, 500, 1000];
+
+  seleccionarPago(asignacionId: string): void {
     this.asignacionSeleccionadaId.set(asignacionId);
     const pedido = this.pedidoSeleccionado();
     if (pedido) {
@@ -97,18 +99,43 @@ export class CobroComponent {
     }));
   }
 
-  procesarCobro(): void {
+  agregarMonto(cantidad: number): void {
+    const montoActual = this.formularioPago().montoPagado;
+    this.formularioPago.update(form => ({
+      ...form,
+      montoPagado: montoActual + cantidad
+    }));
+  }
+
+  establecerMontoExacto(): void {
+    const pedido = this.pedidoSeleccionado();
+    if (pedido) {
+      this.formularioPago.update(form => ({
+        ...form,
+        montoPagado: pedido.total
+      }));
+    }
+  }
+
+  limpiarMonto(): void {
+    this.formularioPago.update(form => ({
+      ...form,
+      montoPagado: 0
+    }));
+  }
+
+  procesarPago(): void {
     const asignacion = this.asignacionSeleccionada();
     const pedido = this.pedidoSeleccionado();
     const form = this.formularioPago();
 
     if (!asignacion || !pedido) {
-      alert('Selecciona un pedido para cobrar');
+      alert('Selecciona un pedido para pagar');
       return;
     }
 
     if (pedido.pagado) {
-      alert('Este pedido ya fue cobrado');
+      alert('Este pedido ya fue pagado');
       return;
     }
 
@@ -124,7 +151,7 @@ export class CobroComponent {
     });
 
     if (!pago) {
-      alert('No se pudo procesar el cobro. Intenta nuevamente.');
+      alert('No se pudo procesar el pago. Intenta nuevamente.');
       return;
     }
 
@@ -149,4 +176,3 @@ export class CobroComponent {
     });
   }
 }
-
